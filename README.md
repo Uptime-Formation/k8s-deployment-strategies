@@ -35,7 +35,7 @@ These examples were created and tested on [Minikube](http://github.com/kubernete
 running with Kubernetes v1.10.0.
 
 ```
-$ minikube start --kubernetes-version v1.10.0 --memory 8192 --cpus 2
+$ minikube start
 ```
 
 
@@ -49,31 +49,49 @@ the progress and performance of a deployment.
 To install Helm, follow the instructions provided on their
 [website](https://github.com/kubernetes/helm/releases).
 
-```
-$ helm init
-```
-
 ### Install Prometheus
 
 ```
+$ kubectl create namespace monitoring
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+$ helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics
+$ helm repo update
 $ helm install \
     --namespace=monitoring \
-    --name=prometheus \
-    --version=7.0.0 \
-    stable/prometheus
+    --version=13.2.1 \
+    prometheus \
+    prometheus-community/prometheus
 ```
 
 ### Install Grafana
 
+Create a Kubernetes secret with grafana admin loging
+
+```bash
+cat <<EOF | kubectl apply -n monitoring -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: monitoring
+  name: grafana-auth
+type: Opaque
+data:
+  admin-user: $(echo -n "admin" | base64 -w0)
+  admin-password: $(echo -n "admin" | base64 -w0)
+EOF
 ```
+
+```
+$ helm repo add grafana https://grafana.github.io/helm-charts
+$ helm repo update
 $ helm install \
     --namespace=monitoring \
-    --name=grafana \
-    --version=1.12.0 \
-    --set=adminUser=admin \
-    --set=adminPassword=admin \
+    --version=6.1.17 \
+    --set=admin.existingSecret=grafana-auth \
     --set=service.type=NodePort \
-    stable/grafana
+    --set=service.nodePort=32001 \
+    grafana \
+    grafana/grafana
 ```
 
 ### Setup Grafana
@@ -98,7 +116,7 @@ Access: Server
 Create a dashboard with a Graph. Use the following query:
 
 ```
-sum(rate(http_requests_total{app="my-app"}[5m])) by (version)
+sum(rate(http_requests_total{app="goprom"}[5m])) by (version)
 ```
 
 To have a better overview of the version, add `{{version}}` in the legend field.
