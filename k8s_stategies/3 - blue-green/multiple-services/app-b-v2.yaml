@@ -1,27 +1,45 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  name: goprom-v2
+  name: goprom-b-v2
   labels:
     app: goprom
 spec:
-  replicas: 1
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+
+  # Note here that we match both the app and the version
+  selector:
+    app: goprom-b
+    version: v2.0.0
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goprom-b-v2
+  labels:
+    app: goprom
+spec:
+  replicas: 2
   selector:
     matchLabels:
-      app: goprom
+      app: goprom-b
       version: v2.0.0
   template:
     metadata:
       labels:
-        app: goprom
+        app: goprom-b
         version: v2.0.0
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9101"
     spec:
       containers:
-      - name: goprom
-        image: containersol/k8s-deployment-strategies
+      - name: goprom-b
+        image: uptime-formation/goprom
+        imagePullPolicy: Never
         ports:
         - name: http
           containerPort: 8080

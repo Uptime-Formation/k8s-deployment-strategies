@@ -3,7 +3,7 @@
 all: test-all build
 
 build:
-	docker build --no-cache -t containersol/k8s-deployment-strategies .
+	docker build --no-cache -t uptime-formation/goprom .
 
 test-all: vet lint test
 

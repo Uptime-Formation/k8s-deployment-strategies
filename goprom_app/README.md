@@ -19,7 +19,7 @@ $ go run main.go
 #### Build
 
 ```
-$ docker build -t containersol/k8s-deployment-strategies .
+$ docker build -t uptime-formation/goprom .
 ```
 
 #### Run
@@ -31,7 +31,7 @@ $ docker run -d \
     -p 9101:9101 \
     -h host-1 \
     -e VERSION=v1.0.0
-    containersol/k8s-deployment-strategies
+    uptime-formation/goprom
 ```
 
 #### Test

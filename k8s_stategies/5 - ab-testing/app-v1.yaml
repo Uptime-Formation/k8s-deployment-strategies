@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: goprom
+  name: goprom-v1
   labels:
     app: goprom
 spec:
-  type: NodePort
   ports:
   - name: http
     port: 80
     targetPort: http
   selector:
     app: goprom
+    version: v1.0.0
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -36,7 +36,8 @@ spec:
     spec:
       containers:
       - name: goprom
-        image: containersol/k8s-deployment-strategies
+        image: uptime-formation/goprom
+        imagePullPolicy: Never
         ports:
         - name: http
           containerPort: 8080
@@ -56,6 +57,3 @@ spec:
             path: /ready
             port: probe
           periodSeconds: 5
-        resources:
-          requests:
-            cpu: 5m
