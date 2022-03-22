@@ -19,7 +19,7 @@ $ go run main.go
 #### Build
 
 ```
-$ docker build -t uptime-formation/goprom .
+$ docker build -t tecpi/goprom .
 ```
 
 #### Run
@@ -31,7 +31,7 @@ $ docker run -d \
     -p 9101:9101 \
     -h host-1 \
     -e VERSION=v1.0.0
-    uptime-formation/goprom
+    tecpi/goprom
 ```
 
 #### Test
