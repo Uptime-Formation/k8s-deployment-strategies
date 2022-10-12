@@ -39,7 +39,7 @@ spec:
       containers:
       - name: goprom-a
         image: tecpi/goprom
-        imagePullPolicy: Never
+#       imagePullPolicy: Never
         ports:
         - name: http
           containerPort: 8080
