@@ -56,7 +56,7 @@ $ kubectl rollout undo deploy goprom
 # subset of users
 $ kubectl rollout pause deploy goprom
 
-# Then if you are satisfy with the result, rollout
+# Then if you are satisfied with the result, resume rollout
 $ kubectl rollout resume deploy goprom
 ```
 

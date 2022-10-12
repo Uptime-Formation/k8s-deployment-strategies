@@ -1,7 +1,7 @@
 Kubernetes deployment strategies
 ================================
 
-> In Kubernetes there is few different way to release an application, you have
+> In Kubernetes there are a few different ways to release an application, you have
 to carefully choose the right strategy to make your infrastructure resilient.
 
 - [recreate](recreate/): terminate the old version and release the new one
@@ -22,8 +22,8 @@ to carefully choose the right strategy to make your infrastructure resilient.
 ![deployment strategy decision diagram](decision-diagram.png)
 
 Before experimenting, checkout the following resources:
-- [CNCF prensentation](https://www.youtube.com/watch?v=1oPhfKye5Pg)
-- [CNCF prensentation slides](https://www.slideshare.net/EtienneTremel/kubernetes-deployment-strategies-cncf-webinar)
+- [CNCF presentation](https://www.youtube.com/watch?v=1oPhfKye5Pg)
+- [CNCF presentation slides](https://www.slideshare.net/EtienneTremel/kubernetes-deployment-strategies-cncf-webinar)
 - [Kubernetes deployment strategies](https://container-solutions.com/kubernetes-deployment-strategies/)
 - [Six Strategies for Application Deployment](https://thenewstack.io/deployment-strategies/).
 - [Canary deployment using Istio and Helm](https://github.com/etiennetremel/istio-cross-namespace-canary-release-demo)
@@ -32,21 +32,26 @@ Before experimenting, checkout the following resources:
 ## Getting started
 
 These examples were created and tested on [Minikube](http://github.com/kubernetes/minikube)
-running with Kubernetes v1.10.0.
+running with Kubernetes v1.25.2 and [Rancher Desktop](https://rancherdesktop.io/) running
+with Kubernetes 1.23.6.
+
+On MacOS the hypervisor VM does not have external connectivity so docker image pulls
+will fail. To resolve this, install another driver such as
+[VirtualBox](https://www.virtualbox.org/) and add `--vm-driver virtualbox`
+to the command to be able to pull images.
 
 ```
-$ minikube start
+$ minikube start --kubernetes-version v1.25.2 --memory 8192 --cpus 2
 ```
-
 
 ## Visualizing using Prometheus and Grafana
 
 The following steps describe how to setup Prometheus and Grafana to visualize
 the progress and performance of a deployment.
 
-### Install Helm
+### Install Helm3
 
-To install Helm, follow the instructions provided on their
+To install Helm3, follow the instructions provided on their
 [website](https://github.com/kubernetes/helm/releases).
 
 ### Install Prometheus
@@ -113,11 +118,15 @@ Url: http://prometheus-server
 Access: Server
 ```
 
-Create a dashboard with a Graph. Use the following query:
+Create a dashboard with a Time series or import
+the [JSON export](grafana-dashboard.json). Use the following query:
 
 ```
-sum(rate(http_requests_total{app="goprom"}[5m])) by (version)
+sum(rate(http_requests_total{app="goprom"}[2m])) by (version)
 ```
+
+Since we installed Prometheus with default settings, it is using the default scrape
+interval of `1m` so the range cannot be lower than that.
 
 To have a better overview of the version, add `{{version}}` in the legend field.
 
