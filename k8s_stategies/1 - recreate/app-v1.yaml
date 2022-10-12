@@ -41,9 +41,6 @@ spec:
       app: goprom
   strategy:
     type: Recreate
-  selector:
-    matchLabels:
-      app: goprom
   template:
     metadata:
       labels:
